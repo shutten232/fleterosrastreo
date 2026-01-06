@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fletero · Enviar ubicación</title>
+<style>
+body{margin:0;background:#0b0f14;color:#eaf0ff;font-family:system-ui}
+button{padding:14px;border-radius:12px;font-weight:700}
+</style>
+</head>
+<body>
+<h2>Fletero · Enviar ubicación</h2>
+<button onclick="start()">INICIAR</button>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDXE220yJCQEJf-Sj9f9qZlVc05fTLZRm4",
+  authDomain: "apprastreofleteros.firebaseapp.com",
+  databaseURL: "https://apprastreofleteros-default-rtdb.firebaseio.com",
+  projectId: "apprastreofleteros",
+  storageBucket: "apprastreofleteros.firebasestorage.app",
+  messagingSenderId: "897555475590",
+  appId: "1:897555475590:web:955dcf93c6678c2c2bf507"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const driverId="test1";
+function start(){
+ navigator.geolocation.watchPosition(p=>{
+  db.ref("drivers/"+driverId+"/live").set({
+    lat:p.coords.latitude,
+    lng:p.coords.longitude,
+    ts:Date.now()
+  });
+ });
+}
+</script>
+</body>
+</html>
