@@ -94,6 +94,7 @@ a:hover{ text-decoration:underline; text-underline-offset:3px; }
 }
 
 .hero:before{
+  pointer-events:none;
   content:"";
   position:absolute;
   inset:-70px -70px auto auto;
@@ -102,6 +103,7 @@ a:hover{ text-decoration:underline; text-underline-offset:3px; }
   background: radial-gradient(circle at 30% 30%, rgba(24,167,159,.26), transparent 62%);
 }
 .hero:after{
+  pointer-events:none;
   content:"";
   position:absolute;
   inset:auto auto -110px -110px;
@@ -291,3 +293,13 @@ tr:last-child td{ border-bottom:0; }
   .hTitle{ font-size:20px; }
   .h1{ font-size:22px; }
 }
+
+
+.btn{ touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+.heroTop, .center{ position:relative; z-index:2; }
+.hero:before, .hero:after{ z-index:1; }
+
+/* Mobile safety: nothing decorative captures touches */
+.hero, .hero *{ pointer-events:auto; }
+.hero:before, .hero:after{ pointer-events:none !important; }

@@ -273,11 +273,21 @@
         setStatus('err','Firebase', msg + ' (revisá firebase-config.js y databaseURL).');
       }
     })();
+</script>
 
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('../sw.js').catch(()=>{});
-    }
-  </script>
+
+<div id="dbg" style="position:fixed;left:10px;bottom:10px;z-index:99999;background:rgba(0,0,0,.65);color:#fff;padding:8px 10px;border-radius:12px;font:12px system-ui;max-width:90vw">
+  JS: <b id="dbgJs">OK</b> · Tap: <b id="dbgTap">—</b>
+</div>
+<script>
+  document.addEventListener('click', (e)=>{
+    const t = e.target;
+    const id = (t && t.id) ? ('#'+t.id) : (t && t.tagName ? t.tagName.toLowerCase() : '?');
+    const cls = (t && t.className && typeof t.className === 'string') ? ('.'+t.className.split(' ').slice(0,2).join('.')) : '';
+    const box = document.getElementById('dbgTap');
+    if(box) box.textContent = id + cls;
+  }, {passive:true});
+</script>
 
 </body>
 </html>

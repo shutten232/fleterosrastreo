@@ -213,11 +213,7 @@
         hint.textContent = msg + ' (revisá firebase-config.js y reglas RTDB).';
       }
     })();
-
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('../sw.js').catch(()=>{});
-    }
-  </script>
+</script>
 
 </body>
 </html>
