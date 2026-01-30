@@ -10,13 +10,17 @@
 </head>
 <body>
   <div class="wrap" style="max-width:980px">
+    <div class="nav">
+      <div class="brand"><div class="t">Arrived</div><div class="s">Landing</div></div>
+      <div class="navActions"><div class="pill"><span class="dot"></span><span>GitHub Pages</span></div></div>
+    </div>
+
     <div class="hero">
       <div class="heroTop">
         <div>
           <div class="hTitle">Arrived</div>
-          <div class="hSub">PWA para reportar llegadas y panel con mapa (Realtime Database). Fleteros: Joaquin, Rodrigo, Jorge, Agustin.</div>
+          <div class="hSub">Fleteros: Joaquin, Rodrigo, Jorge, Agustin. Reporte por botón + panel con mapa (RTDB).</div>
         </div>
-        <div class="pill"><span class="dot"></span><span>GitHub Pages</span></div>
       </div>
 
       <div class="center" style="padding-top:10px">
@@ -34,33 +38,20 @@
           <small>En celular: Fletero. En PC: Panel.</small>
         </div>
 
-        <div class="row" style="margin-top:14px; justify-content:center">
-          <a class="btn btnPrimary" href="./fletero/index.html" style="text-align:center; width:min(520px,100%);">Ir a Fletero</a>
-          <a class="btn btnGhost" href="./panel/index.html" style="text-align:center; width:min(520px,100%);">Ir a Panel</a>
+        <div class="row" style="margin-top:14px">
+          <a class="btn btnPrimary" href="./fletero/index.html" style="text-align:center; width:min(520px,100%)">Ir a Fletero</a>
+          <a class="btn btnGhost" href="./panel/index.html" style="text-align:center; width:min(520px,100%)">Ir a Panel</a>
         </div>
 
-        <div class="status" style="margin-top:14px">
+        <div class="status">
           <div>ℹ️</div>
           <div>
-            <div><b>Requisitos:</b> Firebase RTDB + Auth anónimo + domain autorizado en Firebase.</div>
-            <div class="small">Si GPS no funciona: usá HTTPS (GitHub Pages ya lo es) y aceptá permisos de ubicación.</div>
+            <div><b>Firebase:</b> Auth anónimo habilitado + dominio autorizado + reglas RTDB pegadas.</div>
+            <div class="small">GPS requiere permisos de ubicación.</div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="card">
-      <div class="small">
-        Tips:
-        <ul>
-          <li>Configuración Firebase en <code>shared/firebase-config.js</code></li>
-          <li>Reglas RTDB: <code>database.rules.json</code></li>
-        </ul>
-      </div>
-    </div>
   </div>
-
-  <script>
-</script>
 </body>
 </html>

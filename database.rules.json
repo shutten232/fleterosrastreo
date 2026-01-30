@@ -5,13 +5,13 @@
     "live": {
       "$fleteroId": {
         ".write": "auth != null && newData.child('fleteroId').val() == $fleteroId",
-        ".validate": "newData.hasChildren(['fleteroId','ts']) && newData.child('ts').isNumber() && newData.child('ts').val() <= now && newData.child('ts').val() >= (now - 2592000000)"
+        ".validate": "newData.hasChildren(['fleteroId','ts','lat','lng']) && newData.child('ts').isNumber() && newData.child('ts').val() <= now && newData.child('ts').val() >= (now - 2592000000) && newData.child('lat').isNumber() && newData.child('lng').isNumber()"
       }
     },
     "arrivals": {
       "$id": {
         ".write": "auth != null",
-        ".validate": "newData.hasChildren(['fleteroId','ts']) && newData.child('ts').isNumber() && newData.child('ts').val() <= now && newData.child('ts').val() >= (now - 2592000000)"
+        ".validate": "newData.hasChildren(['fleteroId','ts','lat','lng']) && newData.child('ts').isNumber() && newData.child('ts').val() <= now && newData.child('ts').val() >= (now - 2592000000) && newData.child('lat').isNumber() && newData.child('lng').isNumber()"
       }
     }
   }
