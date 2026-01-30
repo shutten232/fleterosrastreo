@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#bfe6e2" />
+  <link rel="stylesheet" href="../shared/ui.css" />
+  <title>Arrived · Panel Mapa</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../shared/firebase-config.js"></script>
+  <script src="../shared/utils.global.js"></script>
+  <script src="../shared/firebase.global.js"></script>
+
+  <style>
+    #map{ height: 520px; border-radius:18px; border:1px solid var(--line); overflow:hidden; }
+    @media (max-width: 920px){ #map{ height: 360px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+  <div class="nav">
+    <div class="brand"><div class="t">Arrived</div><div class="s">Panel administrativo</div></div>
+    <div class="navActions">
+      <a class="pill" href="../fletero/index.html"><span class="dot"></span><span>Ir a Fletero</span></a>
+      </div>
+      </div>
+
+    <div class="hero" style="padding-bottom:12px">
+      <div class="heroTop">
+        <div>
+          <div class="hTitle">Panel · Mapa Fleteros</div>
+          <div class="hSub">Un marcador por fletero. Cada nuevo reporte reemplaza la ubicación.</div>
+        </div>
+        <div class="pill"><span class="dot" id="connDot"></span><span id="connTxt">Conexión: --</span></div>
+      </div>
+
+      <div class="row" style="justify-content:flex-start">
+        <div style="flex:1; min-width:240px">
+          <label style="margin:10px 0 6px">Filtrar por fletero</label>
+          <input id="q" placeholder="Ej: Juan / Flete 1" />
+        </div>
+        <div style="flex:0 0 auto; margin-top:26px">
+          <button class="btn btnGhost" id="btnClear" style="width:auto; padding:12px 14px">Limpiar filtro</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+  <div class="card">
+    <div id="map"></div>
+    <div class="small" id="hint" style="margin-top:10px">—</div>
+  </div>
+  <div class="card">
+    <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Último reporte</th>
+              <th>Fletero</th>
+              <th>Ubicación</th>
+              <th>Precisión</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  <script>
+    const { fmt, mapLink, clamp } = window.ArrivedUtils;
+    const { getConfig } = window.ArrivedFirebase;
+
+    const el = (id)=>document.getElementById(id);
+    const connDot = el('connDot');
+    const connTxt = el('connTxt');
+    const q = el('q');
+    const btnClear = el('btnClear');
+    const tbody = el('tbody');
+    const hint = el('hint');
+
+    let app, auth, db;
+    let rowsAll = [];
+    const markers = new Map();
+
+    function setConn(ok, msg){
+      connDot.style.background = ok ? 'rgba(23,178,106,.9)' : 'rgba(255,90,90,.9)';
+      connTxt.textContent = msg;
+    }
+
+    const map = L.map('map').setView([-31.4167, -64.1833], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    function upsertMarker(r){
+      if(r.lat == null || r.lng == null) return;
+      const key = r.fleteroId;
+      const pos = [r.lat, r.lng];
+      const text = `<b>${key}</b><br>${fmt(r.ts)}<br>${r.accuracy ? Math.round(r.accuracy)+' m' : ''}`;
+
+      const existing = markers.get(key);
+      if(existing){
+        existing.setLatLng(pos);
+        existing.setPopupContent(text);
+      } else {
+        const m = L.marker(pos).addTo(map);
+        m.bindPopup(text);
+        markers.set(key, m);
+      }
+    }
+
+    function setMarkerVisibility(filterTerm){
+      for(const [id, marker] of markers.entries()){
+        const show = !filterTerm || id.toLowerCase().includes(filterTerm);
+        if(show){
+          if(!map.hasLayer(marker)) marker.addTo(map);
+        } else {
+          if(map.hasLayer(marker)) map.removeLayer(marker);
+        }
+      }
+    }
+
+    function fitToVisible(){
+      const latlngs = [];
+      for(const marker of markers.values()){
+        if(map.hasLayer(marker)) latlngs.push(marker.getLatLng());
+      }
+      if(latlngs.length === 1){
+        map.setView(latlngs[0], 14);
+      } else if(latlngs.length > 1){
+        map.fitBounds(L.latLngBounds(latlngs).pad(0.25));
+      }
+    }
+
+    function render(rows){
+      tbody.innerHTML = '';
+      rows.forEach(r=>{
+        const tr = document.createElement('tr');
+        const link = mapLink(r.lat, r.lng);
+        tr.innerHTML = `
+          <td>${fmt(r.ts)}</td>
+          <td><b>${r.fleteroId || ''}</b><div class="small">${r.deviceId || ''}</div></td>
+          <td>${link ? `<a href="${link}" target="_blank" rel="noopener">Abrir</a>` : '<span class="small">—</span>'}</td>
+          <td>${r.accuracy ? Math.round(r.accuracy) + ' m' : '—'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      hint.textContent = rows.length
+        ? `Fleteros visibles: ${rows.length}. Cada nuevo reporte reemplaza la marca del fletero.`
+        : 'Sin datos. Esperando reportes...';
+    }
+
+    function applyFilter(){
+      const term = clamp(q.value, 60).toLowerCase();
+      const filtered = term
+        ? rowsAll.filter(r => String(r.fleteroId||'').toLowerCase().includes(term))
+        : rowsAll;
+      render(filtered);
+      setMarkerVisibility(term);
+      fitToVisible();
+    }
+
+    async function init(){
+      const cfg = getConfig();
+      app = firebase.initializeApp(cfg);
+      auth = firebase.auth();
+      db = firebase.database();
+      await auth.signInAnonymously();
+
+      const ref = db.ref('live');
+      ref.on('value', (snap)=>{
+        const val = snap.val() || {};
+        const arr = Object.values(val);
+        arr.sort((a,b)=> (b.ts||0) - (a.ts||0));
+        rowsAll = arr;
+        arr.forEach(upsertMarker);
+        applyFilter();
+      });
+
+      setConn(true,'Conexión: OK');
+    }
+
+    q.addEventListener('input', applyFilter);
+    btnClear.addEventListener('click', ()=>{ q.value=''; applyFilter(); });
+
+    (async ()=>{
+      try{
+        await init();
+      }catch(e){
+        setConn(false,'Conexión: ERROR');
+        const msg = (e && e.message) ? e.message : 'Error';
+        hint.textContent = msg + ' (revisá firebase-config.js y reglas RTDB).';
+      }
+    })();
+
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('../sw.js').catch(()=>{});
+    }
+  </script>
+
+</body>
+</html>

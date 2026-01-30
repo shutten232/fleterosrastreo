@@ -1,38 +1,69 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Panel Fletero</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<style>#map{height:100vh}</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#bfe6e2" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./shared/ui.css" />
+  <title>Arrived · Fleteros</title>
 </head>
 <body>
-<div id="map"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDXE220yJCQEJf-Sj9f9qZlVc05fTLZRm4",
-  authDomain: "apprastreofleteros.firebaseapp.com",
-  databaseURL: "https://apprastreofleteros-default-rtdb.firebaseio.com",
-  projectId: "apprastreofleteros",
-  storageBucket: "apprastreofleteros.firebasestorage.app",
-  messagingSenderId: "897555475590",
-  appId: "1:897555475590:web:955dcf93c6678c2c2bf507"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-const map=L.map('map').setView([-31.4167,-64.1833],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-const marker=L.marker([-31.4167,-64.1833]).addTo(map);
-db.ref("drivers/test1/live").on("value",s=>{
- if(!s.exists())return;
- const v=s.val();
- marker.setLatLng([v.lat,v.lng]);
- map.panTo([v.lat,v.lng]);
-});
-</script>
+  <div class="wrap" style="max-width:980px">
+    <div class="hero">
+      <div class="heroTop">
+        <div>
+          <div class="hTitle">Arrived</div>
+          <div class="hSub">PWA para reportar llegadas y panel con mapa (Realtime Database).</div>
+        </div>
+        <div class="pill"><span class="dot"></span><span>GitHub Pages</span></div>
+      </div>
+
+      <div class="center" style="padding-top:10px">
+        <div class="ring">
+          <div class="ringInner">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path d="M12 21s7-4.4 7-11A7 7 0 0 0 5 10c0 6.6 7 11 7 11Z" stroke="rgba(14,26,43,.75)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M12 11.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" fill="rgba(14,26,43,.55)"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="h1">
+          Elegí módulo
+          <small>En celular: Fletero. En PC: Panel.</small>
+        </div>
+
+        <div class="row" style="margin-top:14px; justify-content:center">
+          <a class="btn btnPrimary" href="./fletero/index.html" style="text-align:center; width:min(520px,100%);">Ir a Fletero</a>
+          <a class="btn btnGhost" href="./panel/index.html" style="text-align:center; width:min(520px,100%);">Ir a Panel</a>
+        </div>
+
+        <div class="status" style="margin-top:14px">
+          <div>ℹ️</div>
+          <div>
+            <div><b>Requisitos:</b> Firebase RTDB + Auth anónimo + domain autorizado en Firebase.</div>
+            <div class="small">Si GPS no funciona: usá HTTPS (GitHub Pages ya lo es) y aceptá permisos de ubicación.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="small">
+        Tips:
+        <ul>
+          <li>Configuración Firebase en <code>shared/firebase-config.js</code></li>
+          <li>Reglas RTDB: <code>database.rules.json</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
+  </script>
 </body>
 </html>
