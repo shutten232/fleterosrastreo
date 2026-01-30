@@ -1,11 +1,8 @@
-// PEGAR ACA TU CONFIG (Web App). IMPORTANTE: agregar databaseURL (Realtime Database).
-// Authentication: habilitar Anonymous.
-// Realtime Database: crear DB.
-// Ejemplo databaseURL: https://TU-PROYECTO-default-rtdb.firebaseio.com
+// Firebase config – Arrived Fleteros (Realtime Database)
 window.FIREBASE_CONFIG = {
-  apiKey: "REEMPLAZAR",
-  authDomain: "REEMPLAZAR",
-  databaseURL: "REEMPLAZAR",
-  projectId: "REEMPLAZAR",
-  appId: "REEMPLAZAR"
+  apiKey: "AIzaSyBW6R9IguNRr5WLtsTTKY6eo0rkCpkKcL0",
+  authDomain: "testeoappflete.firebaseapp.com",
+  databaseURL: "https://testeoappflete-default-rtdb.firebaseio.com",
+  projectId: "testeoappflete",
+  appId: "1:100452994973:web:71b2baa00ead371fcd6974"
 };

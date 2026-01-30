@@ -105,13 +105,13 @@
 
     const carIcon = L.icon({
       iconUrl: "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2764%27%20height%3D%2764%27%20viewBox%3D%270%200%2064%2064%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cfilter%20id%3D%27s%27%20x%3D%27-50%25%27%20y%3D%27-50%25%27%20width%3D%27200%25%27%20height%3D%27200%25%27%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%270%27%20dy%3D%274%27%20stdDeviation%3D%273%27%20flood-color%3D%27%2300162b%27%20flood-opacity%3D%27.35%27/%3E%0A%20%20%20%20%3C/filter%3E%0A%20%20%3C/defs%3E%0A%20%20%3Cg%20filter%3D%27url%28%23s%29%27%3E%0A%20%20%20%20%3Cpath%20d%3D%27M12%2034c1-6%204-14%208-16%206-3%2018-3%2024%200%204%202%207%2010%208%2016%27%20fill%3D%27%231e88ff%27%20stroke%3D%27%230a3a78%27%20stroke-width%3D%273%27%20stroke-linejoin%3D%27round%27/%3E%0A%20%20%20%20%3Cpath%20d%3D%27M10%2034h44c2%200%204%202%204%204v10c0%202-2%204-4%204H10c-2%200-4-2-4-4V38c0-2%202-4%204-4Z%27%20fill%3D%27%231e88ff%27%20stroke%3D%27%230a3a78%27%20stroke-width%3D%273%27%20stroke-linejoin%3D%27round%27/%3E%0A%20%20%20%20%3Cpath%20d%3D%27M20%2026h24%27%20stroke%3D%27%23cfe8ff%27%20stroke-width%3D%273%27%20stroke-linecap%3D%27round%27%20opacity%3D%27.9%27/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2718%27%20cy%3D%2750%27%20r%3D%276%27%20fill%3D%27%230b1320%27%20stroke%3D%27%23ffffff%27%20stroke-width%3D%273%27/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2746%27%20cy%3D%2750%27%20r%3D%276%27%20fill%3D%27%230b1320%27%20stroke%3D%27%23ffffff%27%20stroke-width%3D%273%27/%3E%0A%20%20%20%20%3Cpath%20d%3D%27M18%2034l8-10h12l8%2010%27%20fill%3D%27rgba%28255%2C255%2C255%2C.22%29%27%20stroke%3D%27rgba%28255%2C255%2C255%2C.35%29%27%20stroke-width%3D%272%27%20stroke-linejoin%3D%27round%27/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E",
-      iconSize: [42, 42],
-      iconAnchor: [21, 39],
-      popupAnchor: [0, -34]
+      iconSize: [44, 44],
+      iconAnchor: [22, 41],
+      popupAnchor: [0, -36]
     });
 
-    // Asegura que Leaflet calcule el tamaño real (GitHub Pages / CSS)
-    setTimeout(()=>{ try{ map.invalidateSize(); }catch{} }, 200);
+    // Fix render size on load (Leaflet inside card)
+    setTimeout(()=>{ try{ map.invalidateSize(); }catch{} }, 250);
 
     function upsertMarker(r){
       if(r.lat == null || r.lng == null) return;
@@ -123,7 +123,6 @@
       if(existing){
         existing.setLatLng(pos);
         existing.setPopupContent(text);
-        try{ existing.setZIndexOffset(1000); setTimeout(()=>existing.setZIndexOffset(0), 300); }catch{}
       } else {
         const m = L.marker(pos, { icon: carIcon }).addTo(map);
         m.bindPopup(text);

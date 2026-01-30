@@ -1,7 +1,7 @@
 {
   "name": "Arrived Fleteros · RTDB Live Map",
   "short_name": "ArrivedMap",
-  "start_url": "./fletero/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#bfe6e2",
   "theme_color": "#bfe6e2",
