@@ -1,4 +1,4 @@
-const CACHE = 'arrived-gh-v1';
+const CACHE = 'arrived-gh-v2';
 const ASSETS = [
   './',
   './index.html',
